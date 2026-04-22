@@ -8,7 +8,8 @@ export class AppController {
     this.lastRandomSnack = null;
     this.lastRandomMeal = null;
     this.lastPlanner = { days: [], warning: '' };
-    this.checkedShoppingItems = new Set();
+    this.checkedRandomShoppingItems = new Set();
+    this.checkedWeeklyShoppingItems = new Set();
   }
 
   init() {
@@ -77,7 +78,7 @@ export class AppController {
         this.render();
         this.resetForm();
       } catch (error) {
-        alert(`Import failed: ${error.message}`);
+        alert(`Import fehlgeschlagen: ${error.message}`);
       } finally {
         event.target.value = '';
       }
@@ -133,7 +134,7 @@ export class AppController {
   populateForm(recipe) {
     const { formTitle, cancelEditBtn, form } = this.elements;
 
-    formTitle.textContent = 'Edit Recipe';
+    formTitle.textContent = 'Rezept bearbeiten';
     cancelEditBtn.hidden = false;
 
     form.recipeId.value = recipe.id;
@@ -150,7 +151,7 @@ export class AppController {
 
   resetForm() {
     const { formTitle, cancelEditBtn, form } = this.elements;
-    formTitle.textContent = 'Add Recipe';
+    formTitle.textContent = 'Rezept hinzufügen';
     cancelEditBtn.hidden = true;
     form.reset();
     form.recipeId.value = '';
@@ -166,10 +167,10 @@ export class AppController {
   renderRandomSummary() {
     const parts = [];
     if (this.lastRandomSnack) parts.push(`Snack: ${this.lastRandomSnack.name}`);
-    if (this.lastRandomMeal) parts.push(`Meal: ${this.lastRandomMeal.name}`);
+    if (this.lastRandomMeal) parts.push(`Mahlzeit: ${this.lastRandomMeal.name}`);
 
     if (!parts.length) {
-      this.elements.randomResult.textContent = 'No recipe selected yet.';
+      this.elements.randomResult.textContent = 'Noch nichts ausgewählt.';
       return;
     }
 
@@ -177,32 +178,58 @@ export class AppController {
   }
 
   renderShoppingList() {
-    const ingredients = this.collectShoppingIngredients();
-    const activeNames = new Set(ingredients.map((entry) => entry.name));
-    this.checkedShoppingItems.forEach((name) => {
-      if (!activeNames.has(name)) this.checkedShoppingItems.delete(name);
+    const randomIngredients = this.collectRandomShoppingIngredients();
+    const weeklyIngredients = this.collectWeeklyShoppingIngredients();
+
+    const activeRandomNames = new Set(randomIngredients.map((entry) => entry.name));
+    this.checkedRandomShoppingItems.forEach((name) => {
+      if (!activeRandomNames.has(name)) this.checkedRandomShoppingItems.delete(name);
+    });
+    const activeWeeklyNames = new Set(weeklyIngredients.map((entry) => entry.name));
+    this.checkedWeeklyShoppingItems.forEach((name) => {
+      if (!activeWeeklyNames.has(name)) this.checkedWeeklyShoppingItems.delete(name);
     });
 
     this.renderer.renderShoppingList(
-      this.elements.shoppingListContainer,
-      ingredients,
-      this.checkedShoppingItems,
+      this.elements.randomShoppingListContainer,
+      randomIngredients,
+      this.checkedRandomShoppingItems,
       {
         onToggle: (name, isChecked) => {
-          if (isChecked) this.checkedShoppingItems.add(name);
-          else this.checkedShoppingItems.delete(name);
+          if (isChecked) this.checkedRandomShoppingItems.add(name);
+          else this.checkedRandomShoppingItems.delete(name);
+        }
+      }
+    );
+
+    this.renderer.renderShoppingList(
+      this.elements.weeklyShoppingListContainer,
+      weeklyIngredients,
+      this.checkedWeeklyShoppingItems,
+      {
+        onToggle: (name, isChecked) => {
+          if (isChecked) this.checkedWeeklyShoppingItems.add(name);
+          else this.checkedWeeklyShoppingItems.delete(name);
         }
       }
     );
   }
 
-  collectShoppingIngredients() {
+  collectRandomShoppingIngredients() {
     const sourceRecipes = [
       this.lastRandomSnack,
-      this.lastRandomMeal,
-      ...this.lastPlanner.days.flatMap((day) => day.meals)
+      this.lastRandomMeal
     ].filter(Boolean);
 
+    return this.aggregateIngredients(sourceRecipes);
+  }
+
+  collectWeeklyShoppingIngredients() {
+    const sourceRecipes = this.lastPlanner.days.flatMap((day) => [day.breakfast, ...day.lunches]).filter(Boolean);
+    return this.aggregateIngredients(sourceRecipes);
+  }
+
+  aggregateIngredients(sourceRecipes) {
     const counts = new Map();
     sourceRecipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {

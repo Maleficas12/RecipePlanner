@@ -1,116 +1,122 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RecipePlanner</title>
+    <title>RezeptPlaner</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
     <header class="app-header">
       <div>
-        <h1>RecipePlanner</h1>
-        <p>Store meals/snacks, pick random ideas, and auto-plan your week.</p>
+        <h1>RezeptPlaner</h1>
+        <p>Rezepte verwalten, zufällig auswählen und die Woche planen.</p>
       </div>
-      <button id="themeToggle" class="ghost-btn" type="button">Toggle theme</button>
+      <button id="themeToggle" class="ghost-btn" type="button">Design wechseln</button>
     </header>
 
     <main class="layout">
-      <nav class="tabs" aria-label="Main tabs">
-        <button class="tab-btn active" data-tab-target="pickerTab" type="button">Picker</button>
-        <button class="tab-btn" data-tab-target="recipesTab" type="button">Recipes</button>
+      <nav class="tabs" aria-label="Hauptnavigation">
+        <button class="tab-btn active" data-tab-target="pickerTab" type="button">Auswahl</button>
+        <button class="tab-btn" data-tab-target="recipesTab" type="button">Rezepte</button>
       </nav>
 
       <section id="pickerTab" class="tab-panel active">
         <section class="card" id="randomCard">
           <div class="card-header">
-            <h2>Random Picker</h2>
+            <h2>Zufallsauswahl</h2>
             <div class="actions">
-              <button id="pickRandomSnackBtn" class="primary-btn" type="button">Random snack</button>
-              <button id="pickRandomMealBtn" class="primary-btn" type="button">Random meal</button>
+              <button id="pickRandomSnackBtn" class="primary-btn" type="button">Zufalls-Snack</button>
+              <button id="pickRandomMealBtn" class="primary-btn" type="button">Zufalls-Mahlzeit</button>
             </div>
           </div>
-          <div id="randomResult" class="muted">No recipe selected yet.</div>
+          <div id="randomResult" class="muted">Noch nichts ausgewählt.</div>
+        </section>
+
+        <section class="card" id="randomShoppingCard">
+          <h2>Einkaufsliste (Zufall)</h2>
+          <p class="muted">Zutaten aus den zuletzt gezogenen Zufallsgerichten.</p>
+          <div id="randomShoppingListContainer" class="shopping-list"></div>
         </section>
 
         <section class="card" id="plannerCard">
           <div class="card-header">
-            <h2>Weekly Planner</h2>
-            <button id="generatePlannerBtn" class="primary-btn" type="button">Generate week</button>
+            <h2>Wochenplan</h2>
+            <button id="generatePlannerBtn" class="primary-btn" type="button">Woche erstellen</button>
           </div>
-          <p class="muted">Creates 2 non-repeating meals per day (14 unique meal items when possible).</p>
+          <p class="muted">Pro Tag: 1 Frühstück + 2 Mittagessen (wenn möglich ohne Wiederholung).</p>
           <div id="plannerContainer"></div>
         </section>
 
-        <section class="card" id="shoppingCard">
-          <h2>Shopping checklist</h2>
-          <p class="muted">Ingredients from latest random picks and weekly planner. Tick items as you shop.</p>
-          <div id="shoppingListContainer" class="shopping-list"></div>
+        <section class="card" id="weeklyShoppingCard">
+          <h2>Einkaufsliste (Wochenplan)</h2>
+          <p class="muted">Zutaten aus dem aktuell generierten Wochenplan.</p>
+          <div id="weeklyShoppingListContainer" class="shopping-list"></div>
         </section>
       </section>
 
       <section id="recipesTab" class="tab-panel">
         <section class="card" id="recipeFormCard">
-        <h2 id="formTitle">Add Recipe</h2>
+        <h2 id="formTitle">Rezept hinzufügen</h2>
         <form id="recipeForm">
           <input type="hidden" id="recipeId" name="recipeId" />
 
           <label>Name
-            <input id="name" name="name" required maxlength="120" placeholder="e.g. Omelette" />
+            <input id="name" name="name" required maxlength="120" placeholder="z. B. Omelette" />
           </label>
 
-          <label>Ingredients (comma separated)
-            <textarea id="ingredients" name="ingredients" rows="3" placeholder="eggs, milk, salt"></textarea>
+          <label>Zutaten (durch Komma getrennt)
+            <textarea id="ingredients" name="ingredients" rows="3" placeholder="Eier, Milch, Salz"></textarea>
           </label>
 
           <div class="grid-2">
-            <label>Kcal
+            <label>Kalorien (kcal)
               <input id="kcal" name="kcal" type="number" min="0" step="1" required />
             </label>
-            <label>Protein (g)
+            <label>Eiweiß (g)
               <input id="protein" name="protein" type="number" min="0" step="0.1" required />
             </label>
-            <label>Carbs (g)
+            <label>Kohlenhydrate (g)
               <input id="carbs" name="carbs" type="number" min="0" step="0.1" required />
             </label>
-            <label>Fats (g)
+            <label>Fette (g)
               <input id="fats" name="fats" type="number" min="0" step="0.1" required />
             </label>
           </div>
 
           <div class="grid-2">
-            <label>Cooking time (minutes)
+            <label>Kochzeit (Minuten)
               <input id="cookingTime" name="cookingTime" type="number" min="1" step="1" required />
             </label>
-            <label>Category
+            <label>Kategorie
               <select id="category" name="category" required>
-                <option value="meal">Meal</option>
+                <option value="meal">Mahlzeit</option>
                 <option value="snack">Snack</option>
               </select>
             </label>
-            <label>Meal Slot
+            <label>Tageszeit
               <select id="mealSlot" name="mealSlot" required>
-                <option value="all">All</option>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
+                <option value="all">Alle</option>
+                <option value="breakfast">Frühstück</option>
+                <option value="lunch">Mittagessen</option>
               </select>
             </label>
           </div>
 
           <div class="actions">
-            <button class="primary-btn" type="submit">Save Recipe</button>
-            <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Cancel edit</button>
+            <button class="primary-btn" type="submit">Rezept speichern</button>
+            <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Bearbeiten abbrechen</button>
           </div>
         </form>
         </section>
 
         <section class="card" id="recipeListCard">
         <div class="card-header">
-          <h2>Recipes</h2>
+          <h2>Rezepte</h2>
           <div class="actions inline-actions">
-            <button class="ghost-btn" id="exportJsonBtn" type="button">Export JSON</button>
+            <button class="ghost-btn" id="exportJsonBtn" type="button">JSON exportieren</button>
             <label class="ghost-btn upload-btn">
-              Import JSON
+              JSON importieren
               <input id="importJsonInput" type="file" accept="application/json" hidden />
             </label>
           </div>
@@ -129,14 +135,14 @@
         <p data-role="ingredients" class="muted"></p>
         <dl class="macro-grid">
           <div><dt>Kcal</dt><dd data-role="kcal"></dd></div>
-          <div><dt>P</dt><dd data-role="protein"></dd></div>
-          <div><dt>C</dt><dd data-role="carbs"></dd></div>
-          <div><dt>F</dt><dd data-role="fats"></dd></div>
-          <div><dt>Time</dt><dd data-role="time"></dd></div>
+          <div><dt>Eiweiß</dt><dd data-role="protein"></dd></div>
+          <div><dt>Kohlenh.</dt><dd data-role="carbs"></dd></div>
+          <div><dt>Fett</dt><dd data-role="fats"></dd></div>
+          <div><dt>Zeit</dt><dd data-role="time"></dd></div>
         </dl>
         <div class="actions inline-actions">
-          <button data-role="edit" class="ghost-btn" type="button">Edit</button>
-          <button data-role="remove" class="danger-btn" type="button">Remove</button>
+          <button data-role="edit" class="ghost-btn" type="button">Bearbeiten</button>
+          <button data-role="remove" class="danger-btn" type="button">Löschen</button>
         </div>
       </article>
     </template>

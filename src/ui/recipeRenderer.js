@@ -8,41 +8,43 @@ export class RecipeRenderer {
     this.recipesContainer.innerHTML = '';
 
     if (!recipes.length) {
-      this.recipesContainer.innerHTML = '<p class="muted">No recipes yet.</p>';
+      this.recipesContainer.innerHTML = '<p class="muted">Noch keine Rezepte vorhanden.</p>';
       return;
     }
 
     for (const recipe of recipes) {
       const fragment = this.recipeTemplate.content.cloneNode(true);
       fragment.querySelector('[data-role="name"]').textContent = recipe.name;
-      fragment.querySelector('[data-role="tags"]').textContent = `${recipe.category} · ${recipe.mealSlot}`;
+      const categoryLabel = recipe.category === 'snack' ? 'Snack' : 'Mahlzeit';
+      const slotMap = { breakfast: 'Frühstück', lunch: 'Mittagessen', all: 'Alle' };
+      fragment.querySelector('[data-role="tags"]').textContent = `${categoryLabel} · ${slotMap[recipe.mealSlot] || recipe.mealSlot}`;
       fragment.querySelector('[data-role="ingredients"]').textContent = recipe.ingredients.join(', ');
       fragment.querySelector('[data-role="kcal"]').textContent = recipe.kcal;
       fragment.querySelector('[data-role="protein"]').textContent = `${recipe.protein}g`;
       fragment.querySelector('[data-role="carbs"]').textContent = `${recipe.carbs}g`;
       fragment.querySelector('[data-role="fats"]').textContent = `${recipe.fats}g`;
-      fragment.querySelector('[data-role="time"]').textContent = `${recipe.cookingTime} min`;
+      fragment.querySelector('[data-role="time"]').textContent = `${recipe.cookingTime} Min`;
       fragment.querySelector('[data-role="edit"]').addEventListener('click', () => onEdit(recipe));
       fragment.querySelector('[data-role="remove"]').addEventListener('click', () => onRemove(recipe));
       this.recipesContainer.appendChild(fragment);
     }
   }
 
-  renderRandomRecipe(container, recipe, label = 'Recipe') {
+  renderRandomRecipe(container, recipe, label = 'Gericht') {
     if (!recipe) {
-      container.textContent = 'No recipes available.';
+      container.textContent = 'Keine passenden Rezepte verfügbar.';
       return;
     }
 
     container.innerHTML = `
       <strong>${label}: ${recipe.name}</strong><br />
-      <span class="muted">${recipe.category} · ${recipe.mealSlot} · ${recipe.kcal} kcal · ${recipe.cookingTime} min</span>
+      <span class="muted">${recipe.category} · ${recipe.mealSlot} · ${recipe.kcal} kcal · ${recipe.cookingTime} Min</span>
     `;
   }
 
   renderPlanner(container, planner) {
     if (!planner.days.length) {
-      container.innerHTML = `<p class="muted">${planner.warning || 'No data available.'}</p>`;
+      container.innerHTML = `<p class="muted">${planner.warning || 'Keine Daten verfügbar.'}</p>`;
       return;
     }
 
@@ -50,8 +52,10 @@ export class RecipeRenderer {
     const daysHtml = planner.days.map((day) => `
       <article class="day-card">
         <h4>${day.day}</h4>
+        <p><strong>Frühstück:</strong> ${day.breakfast?.name || '-'}</p>
+        <p><strong>Mittagessen:</strong></p>
         <ul>
-          ${day.meals.map((meal) => `<li>${meal.name}</li>`).join('')}
+          ${day.lunches.map((meal) => `<li>${meal.name}</li>`).join('')}
         </ul>
       </article>
     `).join('');
@@ -61,7 +65,7 @@ export class RecipeRenderer {
 
   renderShoppingList(container, ingredientItems, checkedState, { onToggle }) {
     if (!ingredientItems.length) {
-      container.innerHTML = '<p class="muted">Generate random picks or a planner to build your shopping list.</p>';
+      container.innerHTML = '<p class="muted">Noch keine Zutaten vorhanden.</p>';
       return;
     }
 
