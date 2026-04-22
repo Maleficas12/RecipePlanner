@@ -77,26 +77,15 @@ export class AppController {
 
     sharePlannerBtn.addEventListener('click', async () => {
       const shareUrl = this.getPlannerShareUrl();
-      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-      if (isIos && navigator.share) {
-        try {
-          await navigator.share({
-            title: 'Recipe Planner Wochenplan',
-            text: 'Hier ist mein Wochenplan-Seed.',
-            url: shareUrl
-          });
-        } catch {
-          // User cancelled native share or sharing failed.
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(shareUrl);
+          alert('copied link to clipbaord');
+          return;
         }
-        return;
-      }
-
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(shareUrl);
-        alert('Link zum Wochenplan wurde in die Zwischenablage kopiert.');
-        return;
+      } catch {
+        // Clipboard access failed, fallback to showing URL.
       }
 
       alert(`Teilen-Link: ${shareUrl}`);
