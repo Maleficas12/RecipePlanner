@@ -1,0 +1,42 @@
+const item = (name, category, mealSlot, kcal, protein, carbs, fats, cookingTime, ingredients) => ({
+  id: crypto.randomUUID(),
+  name,
+  category,
+  mealSlot,
+  kcal,
+  protein,
+  carbs,
+  fats,
+  cookingTime,
+  ingredients
+});
+
+export const defaultRecipes = [
+  item('Nüsse', 'snack', 'all', 180, 6, 5, 15, 1, ['mixed nuts']),
+  item('Lassi', 'snack', 'all', 140, 8, 16, 4, 5, ['yogurt', 'milk', 'spices']),
+  item('Omelette', 'meal', 'breakfast', 260, 20, 3, 17, 10, ['eggs', 'salt', 'butter']),
+  item('Toast', 'meal', 'breakfast', 210, 7, 28, 7, 6, ['whole grain toast', 'butter']),
+  item('Vollkorn brot mit Schinken', 'meal', 'breakfast', 320, 18, 32, 13, 8, ['whole grain bread', 'ham']),
+  item('Vollkorn brot mit Frischkäse', 'meal', 'breakfast', 300, 13, 31, 12, 8, ['whole grain bread', 'cream cheese']),
+  item('Protein Joghurt mit Früchte', 'meal', 'breakfast', 280, 22, 26, 8, 5, ['protein yogurt', 'fruit']),
+  item('Brokkoli Auflauf', 'meal', 'lunch', 420, 28, 18, 25, 35, ['broccoli', 'cream', 'cheese']),
+  item('Griesschmarrn', 'meal', 'lunch', 410, 13, 60, 12, 30, ['semolina', 'milk', 'egg']),
+  item('Zucchini-Nudel mit Chicken, gestampfter Knoblauch', 'meal', 'lunch', 470, 39, 24, 18, 25, ['zucchini noodles', 'chicken', 'garlic']),
+  item('Ofen-Kartoffel/Potato Wedges (air fryer)', 'meal', 'lunch', 360, 8, 58, 10, 28, ['potatoes', 'oil', 'spices']),
+  item('Folienkartoffeln mit Knoblauch/Sauce', 'meal', 'lunch', 390, 9, 63, 11, 45, ['potatoes', 'garlic sauce']),
+  item('Eiernockerl mit Knoblauch-Gurken Salat', 'meal', 'lunch', 500, 21, 58, 19, 30, ['nockerl', 'eggs', 'cucumber', 'garlic']),
+  item('Hühner-Eintropfsuppe', 'meal', 'lunch', 320, 30, 18, 11, 45, ['chicken', 'broth', 'dough drops']),
+  item('Ramen', 'meal', 'lunch', 520, 22, 65, 18, 25, ['ramen noodles', 'broth', 'egg']),
+  item('Spaghetti mit Sugo/Pesto', 'meal', 'lunch', 540, 16, 76, 18, 25, ['spaghetti', 'sugo or pesto']),
+  item('Faschiertes mit Reis', 'meal', 'lunch', 570, 34, 52, 23, 30, ['minced meat', 'rice']),
+  item('Shrimps Nudeln', 'meal', 'lunch', 510, 31, 62, 14, 25, ['shrimp', 'noodles']),
+  item('Creme-Spinat mit Ei', 'meal', 'lunch', 390, 21, 18, 24, 20, ['spinach', 'egg', 'cream']),
+  item('Spargel-Creme-Suppe', 'meal', 'lunch', 300, 10, 20, 18, 30, ['asparagus', 'cream', 'stock']),
+  item('Süß-Sauer Chicken', 'meal', 'lunch', 530, 35, 55, 18, 35, ['chicken', 'sweet sour sauce', 'rice']),
+  item('Tortillas mit Teriyaki Chicken', 'meal', 'lunch', 560, 33, 56, 21, 25, ['tortilla', 'chicken', 'teriyaki sauce']),
+  item('Berner-Würstel', 'meal', 'lunch', 610, 29, 12, 49, 18, ['sausages', 'bacon', 'cheese']),
+  item('Lachs mit Kartoffeln', 'meal', 'lunch', 520, 34, 36, 24, 30, ['salmon', 'potatoes']),
+  item('Champignon mit Butter-Chicken Sauce', 'meal', 'lunch', 480, 27, 15, 32, 25, ['mushrooms', 'butter chicken sauce']),
+  item('Palatschinken', 'meal', 'lunch', 460, 14, 62, 16, 20, ['flour', 'milk', 'egg']),
+  item('Karfiol mit Speck', 'meal', 'lunch', 430, 20, 12, 31, 28, ['cauliflower', 'bacon'])
+];

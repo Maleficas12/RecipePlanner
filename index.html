@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipePlanner</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>RecipePlanner</h1>
+        <p>Store meals/snacks, pick random ideas, and auto-plan your week.</p>
+      </div>
+      <button id="themeToggle" class="ghost-btn" type="button">Toggle theme</button>
+    </header>
+
+    <main class="layout">
+      <section class="card" id="recipeFormCard">
+        <h2 id="formTitle">Add Recipe</h2>
+        <form id="recipeForm">
+          <input type="hidden" id="recipeId" name="recipeId" />
+
+          <label>Name
+            <input id="name" name="name" required maxlength="120" placeholder="e.g. Omelette" />
+          </label>
+
+          <label>Ingredients (comma separated)
+            <textarea id="ingredients" name="ingredients" rows="3" placeholder="eggs, milk, salt"></textarea>
+          </label>
+
+          <div class="grid-2">
+            <label>Kcal
+              <input id="kcal" name="kcal" type="number" min="0" step="1" required />
+            </label>
+            <label>Protein (g)
+              <input id="protein" name="protein" type="number" min="0" step="0.1" required />
+            </label>
+            <label>Carbs (g)
+              <input id="carbs" name="carbs" type="number" min="0" step="0.1" required />
+            </label>
+            <label>Fats (g)
+              <input id="fats" name="fats" type="number" min="0" step="0.1" required />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>Cooking time (minutes)
+              <input id="cookingTime" name="cookingTime" type="number" min="1" step="1" required />
+            </label>
+            <label>Category
+              <select id="category" name="category" required>
+                <option value="meal">Meal</option>
+                <option value="snack">Snack</option>
+              </select>
+            </label>
+            <label>Meal Slot
+              <select id="mealSlot" name="mealSlot" required>
+                <option value="all">All</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="primary-btn" type="submit">Save Recipe</button>
+            <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Cancel edit</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card" id="recipeListCard">
+        <div class="card-header">
+          <h2>Recipes</h2>
+          <div class="actions inline-actions">
+            <button class="ghost-btn" id="exportJsonBtn" type="button">Export JSON</button>
+            <label class="ghost-btn upload-btn">
+              Import JSON
+              <input id="importJsonInput" type="file" accept="application/json" hidden />
+            </label>
+          </div>
+        </div>
+        <div id="recipesContainer" class="recipe-list"></div>
+      </section>
+
+      <section class="card" id="randomCard">
+        <div class="card-header">
+          <h2>Random Picker</h2>
+          <button id="pickRandomBtn" class="primary-btn" type="button">Pick random recipe</button>
+        </div>
+        <div id="randomResult" class="muted">No recipe selected yet.</div>
+      </section>
+
+      <section class="card" id="plannerCard">
+        <div class="card-header">
+          <h2>Weekly Planner</h2>
+          <button id="generatePlannerBtn" class="primary-btn" type="button">Generate week</button>
+        </div>
+        <p class="muted">Creates 2 non-repeating meals per day (14 unique items when possible).</p>
+        <div id="plannerContainer"></div>
+      </section>
+    </main>
+
+    <template id="recipeItemTemplate">
+      <article class="recipe-item">
+        <header>
+          <h3 data-role="name"></h3>
+          <span data-role="tags" class="pill"></span>
+        </header>
+        <p data-role="ingredients" class="muted"></p>
+        <dl class="macro-grid">
+          <div><dt>Kcal</dt><dd data-role="kcal"></dd></div>
+          <div><dt>P</dt><dd data-role="protein"></dd></div>
+          <div><dt>C</dt><dd data-role="carbs"></dd></div>
+          <div><dt>F</dt><dd data-role="fats"></dd></div>
+          <div><dt>Time</dt><dd data-role="time"></dd></div>
+        </dl>
+        <div class="actions inline-actions">
+          <button data-role="edit" class="ghost-btn" type="button">Edit</button>
+          <button data-role="remove" class="danger-btn" type="button">Remove</button>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
