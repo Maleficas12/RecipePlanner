@@ -40,10 +40,12 @@ export class RecipeService {
     return filtered[randomIndex];
   }
 
-  generateMonthlyPlan(weeks = 4) {
+  generateMonthlyPlan(weeks = 4, options = {}) {
+    const { seed = Date.now() } = options;
+    const random = this.createSeededRandom(seed);
     const mealPool = this.recipes.filter((recipe) => recipe.category === 'meal');
     if (!mealPool.length) {
-      return { weeks: [], warning: 'Bitte mindestens eine Mahlzeit anlegen.' };
+      return { weeks: [], warning: 'Bitte mindestens eine Mahlzeit anlegen.', seed };
     }
 
     const breakfastPool = this.recipes.filter(
@@ -57,8 +59,8 @@ export class RecipeService {
 
     const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
     const totalDays = weeks * dayNames.length;
-    const breakfastSequence = this.createNonRepeatingSequence(breakfastSource, totalDays);
-    const lunchSequence = this.createNonRepeatingSequence(lunchSource, totalDays * 2);
+    const breakfastSequence = this.createNonRepeatingSequence(breakfastSource, totalDays, random);
+    const lunchSequence = this.createNonRepeatingSequence(lunchSource, totalDays * 2, random);
     const monthlyWeeks = Array.from({ length: weeks }, (_, weekIndex) => {
       const days = dayNames.map((dayName, dayIndex) => {
         const absoluteDayIndex = weekIndex * dayNames.length + dayIndex;
@@ -82,18 +84,18 @@ export class RecipeService {
     if (lunchSource.length < totalDays * 2) warnings.push(`Zu wenige einzigartige Mittagessen für ${totalDays * 2} Slots, Wiederholungen wurden genutzt.`);
     const warning = warnings.join(' ');
 
-    return { weeks: monthlyWeeks, warning };
+    return { weeks: monthlyWeeks, warning, seed };
   }
 
-  createNonRepeatingSequence(pool, totalCount) {
+  createNonRepeatingSequence(pool, totalCount, randomFn = Math.random) {
     if (!pool.length || totalCount <= 0) return [];
-    let batch = [...pool].sort(() => Math.random() - 0.5);
+    let batch = this.shuffle([...pool], randomFn);
     let batchIndex = 0;
     const sequence = [];
 
     for (let i = 0; i < totalCount; i += 1) {
       if (batchIndex >= batch.length) {
-        batch = [...pool].sort(() => Math.random() - 0.5);
+        batch = this.shuffle([...pool], randomFn);
         batchIndex = 0;
       }
       sequence.push(batch[batchIndex]);
@@ -101,6 +103,23 @@ export class RecipeService {
     }
 
     return sequence;
+  }
+
+  shuffle(items, randomFn = Math.random) {
+    for (let i = items.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(randomFn() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    return items;
+  }
+
+  createSeededRandom(seed) {
+    let state = Number(seed) || 1;
+    state = (state >>> 0) || 1;
+    return () => {
+      state = (1664525 * state + 1013904223) >>> 0;
+      return state / 0x100000000;
+    };
   }
 
   exportRecipes() {

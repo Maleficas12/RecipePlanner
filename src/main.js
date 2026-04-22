@@ -27,6 +27,7 @@ const controller = new AppController({
     pickRandomMealBtn: byId('pickRandomMealBtn'),
     plannerContainer: byId('plannerContainer'),
     generatePlannerBtn: byId('generatePlannerBtn'),
+    sharePlannerBtn: byId('sharePlannerBtn'),
     printPlannerBtn: byId('printPlannerBtn'),
     plannerWeekTabs: byId('plannerWeekTabs'),
     plannerWeekTabButtons: Array.from(document.querySelectorAll('#plannerWeekTabs [data-week-index]')),

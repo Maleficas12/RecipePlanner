@@ -9,6 +9,7 @@ export class AppController {
     this.lastRandomMeal = null;
     this.lastPlanner = { weeks: [], warning: '' };
     this.activePlannerWeekIndex = 0;
+    this.plannerSeed = null;
     this.checkedRandomShoppingItems = new Set();
     this.checkedWeeklyShoppingItems = new Set();
   }
@@ -16,7 +17,9 @@ export class AppController {
   init() {
     this.registerEvents();
     this.render();
-    this.lastPlanner = this.service.generateMonthlyPlan();
+    this.plannerSeed = this.readSeedFromUrl() ?? this.generateSeed();
+    this.lastPlanner = this.service.generateMonthlyPlan(4, { seed: this.plannerSeed });
+    this.updateShareUrl();
     this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner, this.activePlannerWeekIndex);
     this.updatePlannerWeekTabs();
     this.renderRandomSummary();
@@ -31,6 +34,7 @@ export class AppController {
       pickRandomSnackBtn,
       pickRandomMealBtn,
       generatePlannerBtn,
+      sharePlannerBtn,
       printPlannerBtn,
       exportJsonBtn,
       importJsonInput,
@@ -62,11 +66,40 @@ export class AppController {
     });
 
     generatePlannerBtn.addEventListener('click', () => {
-      this.lastPlanner = this.service.generateMonthlyPlan();
+      this.plannerSeed = this.generateSeed();
+      this.lastPlanner = this.service.generateMonthlyPlan(4, { seed: this.plannerSeed });
       this.activePlannerWeekIndex = 0;
+      this.updateShareUrl();
       this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner, this.activePlannerWeekIndex);
       this.updatePlannerWeekTabs();
       this.renderShoppingList();
+    });
+
+    sharePlannerBtn.addEventListener('click', async () => {
+      const shareUrl = this.getPlannerShareUrl();
+      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isIos && navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Recipe Planner Wochenplan',
+            text: 'Hier ist mein Wochenplan-Seed.',
+            url: shareUrl
+          });
+        } catch {
+          // User cancelled native share or sharing failed.
+        }
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link zum Wochenplan wurde in die Zwischenablage kopiert.');
+        return;
+      }
+
+      alert(`Teilen-Link: ${shareUrl}`);
     });
 
     printPlannerBtn.addEventListener('click', () => {
@@ -298,5 +331,34 @@ export class AppController {
       button.classList.toggle('active', isActive);
       button.setAttribute('aria-selected', String(isActive));
     });
+  }
+
+  readSeedFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const seedValue = params.get('seed');
+    if (seedValue === null) return null;
+
+    const numericSeed = Number(seedValue);
+    if (!Number.isInteger(numericSeed) || numericSeed < 0) return null;
+    return numericSeed;
+  }
+
+  generateSeed() {
+    if (window.crypto?.getRandomValues) {
+      const values = new Uint32Array(1);
+      window.crypto.getRandomValues(values);
+      return values[0];
+    }
+    return Math.floor(Math.random() * 0x100000000);
+  }
+
+  getPlannerShareUrl() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('seed', String(this.plannerSeed));
+    return url.toString();
+  }
+
+  updateShareUrl() {
+    window.history.replaceState({}, '', this.getPlannerShareUrl());
   }
 }
