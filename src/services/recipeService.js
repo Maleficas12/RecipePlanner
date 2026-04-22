@@ -40,10 +40,10 @@ export class RecipeService {
     return filtered[randomIndex];
   }
 
-  generateWeeklyPlan() {
+  generateMonthlyPlan(weeks = 4) {
     const mealPool = this.recipes.filter((recipe) => recipe.category === 'meal');
     if (!mealPool.length) {
-      return { days: [], warning: 'Bitte mindestens eine Mahlzeit anlegen.' };
+      return { weeks: [], warning: 'Bitte mindestens eine Mahlzeit anlegen.' };
     }
 
     const breakfastPool = this.recipes.filter(
@@ -55,26 +55,52 @@ export class RecipeService {
     const breakfastSource = breakfastPool.length ? breakfastPool : mealPool;
     const lunchSource = lunchPool.length ? lunchPool : mealPool;
 
-    const shuffledBreakfasts = [...breakfastSource].sort(() => Math.random() - 0.5);
-    const shuffledLunches = [...lunchSource].sort(() => Math.random() - 0.5);
     const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-    const days = dayNames.map((day, index) => ({
-      day,
-      breakfast: shuffledBreakfasts[index % shuffledBreakfasts.length],
-      lunches: [
-        shuffledLunches[(index * 2) % shuffledLunches.length],
-        shuffledLunches[(index * 2 + 1) % shuffledLunches.length]
-      ]
-    }));
+    const totalDays = weeks * dayNames.length;
+    const breakfastSequence = this.createNonRepeatingSequence(breakfastSource, totalDays);
+    const lunchSequence = this.createNonRepeatingSequence(lunchSource, totalDays * 2);
+    const monthlyWeeks = Array.from({ length: weeks }, (_, weekIndex) => {
+      const days = dayNames.map((dayName, dayIndex) => {
+        const absoluteDayIndex = weekIndex * dayNames.length + dayIndex;
+        const lunchStartIndex = absoluteDayIndex * 2;
+        return {
+          day: dayName,
+          breakfast: breakfastSequence[absoluteDayIndex] || null,
+          lunches: [lunchSequence[lunchStartIndex], lunchSequence[lunchStartIndex + 1]].filter(Boolean)
+        };
+      });
+      return {
+        label: `Woche ${weekIndex + 1}`,
+        days
+      };
+    });
 
     const warnings = [];
     if (!breakfastPool.length) warnings.push('Keine Frühstücks-Slots gefunden, allgemeine Mahlzeiten wurden als Frühstück genutzt.');
     if (!lunchPool.length) warnings.push('Keine Mittagessen-Slots gefunden, allgemeine Mahlzeiten wurden als Mittagessen genutzt.');
-    if (breakfastSource.length < 7) warnings.push('Zu wenige einzigartige Frühstücke für 7 Tage, Wiederholungen wurden genutzt.');
-    if (lunchSource.length < 14) warnings.push('Zu wenige einzigartige Mittagessen für 14 Slots, Wiederholungen wurden genutzt.');
+    if (breakfastSource.length < totalDays) warnings.push(`Zu wenige einzigartige Frühstücke für ${totalDays} Tage, Wiederholungen wurden genutzt.`);
+    if (lunchSource.length < totalDays * 2) warnings.push(`Zu wenige einzigartige Mittagessen für ${totalDays * 2} Slots, Wiederholungen wurden genutzt.`);
     const warning = warnings.join(' ');
 
-    return { days, warning };
+    return { weeks: monthlyWeeks, warning };
+  }
+
+  createNonRepeatingSequence(pool, totalCount) {
+    if (!pool.length || totalCount <= 0) return [];
+    let batch = [...pool].sort(() => Math.random() - 0.5);
+    let batchIndex = 0;
+    const sequence = [];
+
+    for (let i = 0; i < totalCount; i += 1) {
+      if (batchIndex >= batch.length) {
+        batch = [...pool].sort(() => Math.random() - 0.5);
+        batchIndex = 0;
+      }
+      sequence.push(batch[batchIndex]);
+      batchIndex += 1;
+    }
+
+    return sequence;
   }
 
   exportRecipes() {

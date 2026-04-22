@@ -42,12 +42,13 @@ export class RecipeRenderer {
     `;
   }
 
-  renderPlanner(container, planner) {
-    if (!planner.days.length) {
+  renderPlanner(container, planner, activeWeekIndex = 0) {
+    if (!planner.weeks?.length) {
       container.innerHTML = `<p class="muted">${planner.warning || 'Keine Daten verfügbar.'}</p>`;
       return;
     }
 
+    const week = planner.weeks[activeWeekIndex] || planner.weeks[0];
     const warningHtml = planner.warning ? `<p class="muted">${planner.warning}</p>` : '';
     const mealLine = (meal) => `
       <li>
@@ -55,7 +56,7 @@ export class RecipeRenderer {
         <span class="muted">Zutaten: ${meal.ingredients.join(', ') || '-'}</span>
       </li>
     `;
-    const daysHtml = planner.days.map((day) => `
+    const daysHtml = week.days.map((day) => `
       <article class="day-card">
         <h4>${day.day}</h4>
         <p><strong>Frühstück:</strong></p>
@@ -69,7 +70,11 @@ export class RecipeRenderer {
       </article>
     `).join('');
 
-    container.innerHTML = `${warningHtml}<div class="week-grid">${daysHtml}</div>`;
+    container.innerHTML = `
+      ${warningHtml}
+      <h3 class="planner-week-title">${week.label}</h3>
+      <div class="week-grid">${daysHtml}</div>
+    `;
   }
 
   renderShoppingList(container, ingredientItems, checkedState, { onToggle }) {

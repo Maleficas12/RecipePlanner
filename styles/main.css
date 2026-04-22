@@ -149,6 +149,15 @@ button, .upload-btn {
   grid-template-columns: repeat(7, minmax(110px, 1fr));
   gap: 0.5rem;
 }
+.planner-week-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.planner-week-title {
+  margin: 0.25rem 0 0.6rem;
+}
 .day-card {
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -222,4 +231,68 @@ button, .upload-btn {
 @media (max-width: 900px) {
   .macro-grid { grid-template-columns: repeat(3, 1fr); }
   .week-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .app-header,
+  .tabs,
+  #randomCard,
+  #randomShoppingCard,
+  #weeklyShoppingCard,
+  #recipeFormCard,
+  #recipeListCard,
+  #plannerWeekTabs,
+  #generatePlannerBtn,
+  #printPlannerBtn {
+    display: none !important;
+  }
+
+  .layout,
+  .card,
+  #pickerTab,
+  #plannerCard {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  #plannerCard h2,
+  .planner-week-title {
+    margin: 0 0 0.5rem;
+  }
+
+  #pickerTab {
+    display: block !important;
+  }
+
+  #recipesTab {
+    display: none !important;
+  }
+
+  .week-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0;
+    break-inside: avoid;
+  }
+
+  .day-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-color: #ccc;
+    min-height: 100%;
+  }
 }

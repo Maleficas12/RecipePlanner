@@ -7,7 +7,8 @@ export class AppController {
     this.elements = elements;
     this.lastRandomSnack = null;
     this.lastRandomMeal = null;
-    this.lastPlanner = { days: [], warning: '' };
+    this.lastPlanner = { weeks: [], warning: '' };
+    this.activePlannerWeekIndex = 0;
     this.checkedRandomShoppingItems = new Set();
     this.checkedWeeklyShoppingItems = new Set();
   }
@@ -15,8 +16,9 @@ export class AppController {
   init() {
     this.registerEvents();
     this.render();
-    this.lastPlanner = this.service.generateWeeklyPlan();
-    this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner);
+    this.lastPlanner = this.service.generateMonthlyPlan();
+    this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner, this.activePlannerWeekIndex);
+    this.updatePlannerWeekTabs();
     this.renderRandomSummary();
     this.renderShoppingList();
     this.applySavedTheme();
@@ -29,10 +31,12 @@ export class AppController {
       pickRandomSnackBtn,
       pickRandomMealBtn,
       generatePlannerBtn,
+      printPlannerBtn,
       exportJsonBtn,
       importJsonInput,
       themeToggle,
-      tabButtons
+      tabButtons,
+      plannerWeekTabButtons
     } = this.elements;
 
     recipeForm.addEventListener('submit', (event) => {
@@ -58,9 +62,24 @@ export class AppController {
     });
 
     generatePlannerBtn.addEventListener('click', () => {
-      this.lastPlanner = this.service.generateWeeklyPlan();
-      this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner);
+      this.lastPlanner = this.service.generateMonthlyPlan();
+      this.activePlannerWeekIndex = 0;
+      this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner, this.activePlannerWeekIndex);
+      this.updatePlannerWeekTabs();
       this.renderShoppingList();
+    });
+
+    printPlannerBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    plannerWeekTabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        this.activePlannerWeekIndex = Number(button.dataset.weekIndex || 0);
+        this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner, this.activePlannerWeekIndex);
+        this.updatePlannerWeekTabs();
+        this.renderShoppingList();
+      });
     });
 
     exportJsonBtn.addEventListener('click', () => {
@@ -242,7 +261,9 @@ export class AppController {
   }
 
   collectWeeklyShoppingIngredients() {
-    const sourceRecipes = this.lastPlanner.days.flatMap((day) => [day.breakfast, ...day.lunches]).filter(Boolean);
+    const activeWeek = this.lastPlanner.weeks[this.activePlannerWeekIndex];
+    if (!activeWeek) return [];
+    const sourceRecipes = activeWeek.days.flatMap((day) => [day.breakfast, ...day.lunches]).filter(Boolean);
     return this.aggregateIngredients(sourceRecipes);
   }
 
@@ -267,6 +288,15 @@ export class AppController {
     });
     this.elements.tabPanels.forEach((panel) => {
       panel.classList.toggle('active', panel.id === tabId);
+    });
+  }
+
+  updatePlannerWeekTabs() {
+    this.elements.plannerWeekTabButtons.forEach((button) => {
+      const weekIndex = Number(button.dataset.weekIndex || 0);
+      const isActive = weekIndex === this.activePlannerWeekIndex;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
     });
   }
 }
