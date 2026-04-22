@@ -19,6 +19,8 @@ const controller = new AppController({
     recipeForm: byId('recipeForm'),
     recipeId: byId('recipeId'),
     formTitle: byId('formTitle'),
+    recipeFormDetails: byId('recipeFormDetails'),
+    recipeFormSummary: byId('recipeFormSummary'),
     cancelEditBtn: byId('cancelEditBtn'),
     randomResult: byId('randomResult'),
     pickRandomSnackBtn: byId('pickRandomSnackBtn'),

@@ -71,12 +71,13 @@ body {
 .tab-panel { display: none; gap: 1rem; }
 .tab-panel.active { display: grid; grid-template-columns: repeat(12, 1fr); }
 
-#recipeFormCard, #recipeListCard { grid-column: span 6; }
-#randomCard, #plannerCard, #shoppingCard { grid-column: span 12; }
+#recipeFormCard { grid-column: span 4; }
+#recipeListCard { grid-column: span 8; }
+#randomCard, #plannerCard, #randomShoppingCard, #weeklyShoppingCard { grid-column: span 12; }
 
 @media (max-width: 900px) {
   .tab-panel.active { grid-template-columns: 1fr; }
-  #recipeFormCard, #recipeListCard, #randomCard, #plannerCard, #shoppingCard { grid-column: span 1; }
+  #recipeFormCard, #recipeListCard, #randomCard, #plannerCard, #randomShoppingCard, #weeklyShoppingCard { grid-column: span 1; }
 }
 
 label { display: block; font-size: 0.9rem; margin-bottom: 0.75rem; }
@@ -155,6 +156,38 @@ button, .upload-btn {
 }
 .day-card h4 { margin: 0 0 0.4rem; font-size: 0.92rem; }
 .day-card ul { margin: 0; padding-left: 1rem; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+#recipeFormDetails summary {
+  list-style: none;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.8rem;
+}
+
+#recipeFormDetails summary::-webkit-details-marker { display: none; }
+
+#recipeFormDetails summary::after {
+  content: '▾';
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+#recipeFormDetails:not([open]) summary::after {
+  content: '▸';
+}
 
 .shopping-list {
   border: 1px solid var(--border);

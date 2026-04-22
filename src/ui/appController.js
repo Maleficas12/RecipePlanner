@@ -132,9 +132,11 @@ export class AppController {
   }
 
   populateForm(recipe) {
-    const { formTitle, cancelEditBtn, form } = this.elements;
+    const { formTitle, cancelEditBtn, form, recipeFormDetails, recipeFormSummary } = this.elements;
 
     formTitle.textContent = 'Rezept bearbeiten';
+    recipeFormSummary.textContent = 'Rezept bearbeiten';
+    recipeFormDetails.open = true;
     cancelEditBtn.hidden = false;
 
     form.recipeId.value = recipe.id;
@@ -150,8 +152,9 @@ export class AppController {
   }
 
   resetForm() {
-    const { formTitle, cancelEditBtn, form } = this.elements;
+    const { formTitle, cancelEditBtn, form, recipeFormSummary } = this.elements;
     formTitle.textContent = 'Rezept hinzufügen';
+    recipeFormSummary.textContent = 'Rezept hinzufügen';
     cancelEditBtn.hidden = true;
     form.reset();
     form.recipeId.value = '';
@@ -165,16 +168,30 @@ export class AppController {
   }
 
   renderRandomSummary() {
-    const parts = [];
-    if (this.lastRandomSnack) parts.push(`Snack: ${this.lastRandomSnack.name}`);
-    if (this.lastRandomMeal) parts.push(`Mahlzeit: ${this.lastRandomMeal.name}`);
-
-    if (!parts.length) {
+    if (!this.lastRandomSnack && !this.lastRandomMeal) {
       this.elements.randomResult.textContent = 'Noch nichts ausgewählt.';
       return;
     }
 
-    this.elements.randomResult.innerHTML = `<strong>${parts.join(' | ')}</strong>`;
+    const sections = [];
+    if (this.lastRandomSnack) {
+      sections.push(`
+        <div>
+          <strong>Snack: ${this.lastRandomSnack.name}</strong><br />
+          <span class="muted">Zutaten: ${this.lastRandomSnack.ingredients.join(', ') || '-'}</span>
+        </div>
+      `);
+    }
+    if (this.lastRandomMeal) {
+      sections.push(`
+        <div>
+          <strong>Mahlzeit: ${this.lastRandomMeal.name}</strong><br />
+          <span class="muted">Zutaten: ${this.lastRandomMeal.ingredients.join(', ') || '-'}</span>
+        </div>
+      `);
+    }
+
+    this.elements.randomResult.innerHTML = sections.join('<hr />');
   }
 
   renderShoppingList() {

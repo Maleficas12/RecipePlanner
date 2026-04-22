@@ -41,19 +41,22 @@ export class RecipeService {
   }
 
   generateWeeklyPlan() {
+    const mealPool = this.recipes.filter((recipe) => recipe.category === 'meal');
+    if (!mealPool.length) {
+      return { days: [], warning: 'Bitte mindestens eine Mahlzeit anlegen.' };
+    }
+
     const breakfastPool = this.recipes.filter(
       (recipe) => recipe.category === 'meal' && (recipe.mealSlot === 'breakfast' || recipe.mealSlot === 'all')
     );
     const lunchPool = this.recipes.filter(
       (recipe) => recipe.category === 'meal' && (recipe.mealSlot === 'lunch' || recipe.mealSlot === 'all')
     );
+    const breakfastSource = breakfastPool.length ? breakfastPool : mealPool;
+    const lunchSource = lunchPool.length ? lunchPool : mealPool;
 
-    if (!breakfastPool.length || lunchPool.length < 2) {
-      return { days: [], warning: 'Bitte mindestens 1 Frühstück und 2 Mittagessen als Mahlzeit anlegen.' };
-    }
-
-    const shuffledBreakfasts = [...breakfastPool].sort(() => Math.random() - 0.5);
-    const shuffledLunches = [...lunchPool].sort(() => Math.random() - 0.5);
+    const shuffledBreakfasts = [...breakfastSource].sort(() => Math.random() - 0.5);
+    const shuffledLunches = [...lunchSource].sort(() => Math.random() - 0.5);
     const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
     const days = dayNames.map((day, index) => ({
       day,
@@ -65,8 +68,10 @@ export class RecipeService {
     }));
 
     const warnings = [];
-    if (breakfastPool.length < 7) warnings.push('Zu wenige einzigartige Frühstücke für 7 Tage, Wiederholungen wurden genutzt.');
-    if (lunchPool.length < 14) warnings.push('Zu wenige einzigartige Mittagessen für 14 Slots, Wiederholungen wurden genutzt.');
+    if (!breakfastPool.length) warnings.push('Keine Frühstücks-Slots gefunden, allgemeine Mahlzeiten wurden als Frühstück genutzt.');
+    if (!lunchPool.length) warnings.push('Keine Mittagessen-Slots gefunden, allgemeine Mahlzeiten wurden als Mittagessen genutzt.');
+    if (breakfastSource.length < 7) warnings.push('Zu wenige einzigartige Frühstücke für 7 Tage, Wiederholungen wurden genutzt.');
+    if (lunchSource.length < 14) warnings.push('Zu wenige einzigartige Mittagessen für 14 Slots, Wiederholungen wurden genutzt.');
     const warning = warnings.join(' ');
 
     return { days, warning };

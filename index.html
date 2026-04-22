@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RezeptPlaner</title>
+    <title>Rezept-Planer</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
     <header class="app-header">
       <div>
-        <h1>RezeptPlaner</h1>
+        <h1>Rezept-Planer</h1>
         <p>Rezepte verwalten, zufällig auswählen und die Woche planen.</p>
       </div>
       <button id="themeToggle" class="ghost-btn" type="button">Design wechseln</button>
@@ -57,8 +57,10 @@
 
       <section id="recipesTab" class="tab-panel">
         <section class="card" id="recipeFormCard">
-        <h2 id="formTitle">Rezept hinzufügen</h2>
-        <form id="recipeForm">
+        <details id="recipeFormDetails" open>
+          <summary id="recipeFormSummary">Rezept hinzufügen</summary>
+          <h2 id="formTitle" class="visually-hidden">Rezept hinzufügen</h2>
+          <form id="recipeForm">
           <input type="hidden" id="recipeId" name="recipeId" />
 
           <label>Name
@@ -107,7 +109,8 @@
             <button class="primary-btn" type="submit">Rezept speichern</button>
             <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Bearbeiten abbrechen</button>
           </div>
-        </form>
+          </form>
+        </details>
         </section>
 
         <section class="card" id="recipeListCard">

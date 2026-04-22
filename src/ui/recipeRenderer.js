@@ -18,7 +18,7 @@ export class RecipeRenderer {
       const categoryLabel = recipe.category === 'snack' ? 'Snack' : 'Mahlzeit';
       const slotMap = { breakfast: 'Frühstück', lunch: 'Mittagessen', all: 'Alle' };
       fragment.querySelector('[data-role="tags"]').textContent = `${categoryLabel} · ${slotMap[recipe.mealSlot] || recipe.mealSlot}`;
-      fragment.querySelector('[data-role="ingredients"]').textContent = recipe.ingredients.join(', ');
+      fragment.querySelector('[data-role="ingredients"]').textContent = `Zutaten: ${recipe.ingredients.join(', ')}`;
       fragment.querySelector('[data-role="kcal"]').textContent = recipe.kcal;
       fragment.querySelector('[data-role="protein"]').textContent = `${recipe.protein}g`;
       fragment.querySelector('[data-role="carbs"]').textContent = `${recipe.carbs}g`;
@@ -49,13 +49,22 @@ export class RecipeRenderer {
     }
 
     const warningHtml = planner.warning ? `<p class="muted">${planner.warning}</p>` : '';
+    const mealLine = (meal) => `
+      <li>
+        <strong>${meal.name}</strong><br />
+        <span class="muted">Zutaten: ${meal.ingredients.join(', ') || '-'}</span>
+      </li>
+    `;
     const daysHtml = planner.days.map((day) => `
       <article class="day-card">
         <h4>${day.day}</h4>
-        <p><strong>Frühstück:</strong> ${day.breakfast?.name || '-'}</p>
+        <p><strong>Frühstück:</strong></p>
+        <ul>
+          ${day.breakfast ? mealLine(day.breakfast) : '<li>-</li>'}
+        </ul>
         <p><strong>Mittagessen:</strong></p>
         <ul>
-          ${day.lunches.map((meal) => `<li>${meal.name}</li>`).join('')}
+          ${day.lunches.map((meal) => mealLine(meal)).join('')}
         </ul>
       </article>
     `).join('');
