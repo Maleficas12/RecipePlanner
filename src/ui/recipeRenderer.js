@@ -28,14 +28,14 @@ export class RecipeRenderer {
     }
   }
 
-  renderRandomRecipe(container, recipe) {
+  renderRandomRecipe(container, recipe, label = 'Recipe') {
     if (!recipe) {
       container.textContent = 'No recipes available.';
       return;
     }
 
     container.innerHTML = `
-      <strong>${recipe.name}</strong><br />
+      <strong>${label}: ${recipe.name}</strong><br />
       <span class="muted">${recipe.category} · ${recipe.mealSlot} · ${recipe.kcal} kcal · ${recipe.cookingTime} min</span>
     `;
   }
@@ -57,5 +57,35 @@ export class RecipeRenderer {
     `).join('');
 
     container.innerHTML = `${warningHtml}<div class="week-grid">${daysHtml}</div>`;
+  }
+
+  renderShoppingList(container, ingredientItems, checkedState, { onToggle }) {
+    if (!ingredientItems.length) {
+      container.innerHTML = '<p class="muted">Generate random picks or a planner to build your shopping list.</p>';
+      return;
+    }
+
+    const list = document.createElement('ul');
+    ingredientItems.forEach((entry) => {
+      const item = document.createElement('li');
+      const label = document.createElement('label');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = checkedState.has(entry.name);
+      checkbox.addEventListener('change', () => onToggle(entry.name, checkbox.checked));
+
+      const text = document.createElement('span');
+      text.textContent = entry.count > 1 ? `${entry.name} x${entry.count}` : entry.name;
+      if (checkbox.checked) text.classList.add('is-checked');
+      checkbox.addEventListener('change', () => {
+        text.classList.toggle('is-checked', checkbox.checked);
+      });
+
+      label.append(checkbox, text);
+      item.appendChild(label);
+      list.appendChild(item);
+    });
+
+    container.replaceChildren(list);
   }
 }

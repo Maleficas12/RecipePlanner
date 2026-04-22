@@ -33,6 +33,13 @@ export class RecipeService {
     return this.recipes[randomIndex];
   }
 
+  getRandomByCategory(category) {
+    const filtered = this.recipes.filter((recipe) => recipe.category === category);
+    if (!filtered.length) return null;
+    const randomIndex = Math.floor(Math.random() * filtered.length);
+    return filtered[randomIndex];
+  }
+
   generateWeeklyPlan() {
     const mealPool = this.recipes.filter((recipe) => recipe.category === 'meal');
     if (mealPool.length < 2) {

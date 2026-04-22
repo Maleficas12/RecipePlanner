@@ -5,12 +5,19 @@ export class AppController {
     this.service = service;
     this.renderer = renderer;
     this.elements = elements;
+    this.lastRandomSnack = null;
+    this.lastRandomMeal = null;
+    this.lastPlanner = { days: [], warning: '' };
+    this.checkedShoppingItems = new Set();
   }
 
   init() {
     this.registerEvents();
     this.render();
-    this.renderer.renderPlanner(this.elements.plannerContainer, this.service.generateWeeklyPlan());
+    this.lastPlanner = this.service.generateWeeklyPlan();
+    this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner);
+    this.renderRandomSummary();
+    this.renderShoppingList();
     this.applySavedTheme();
   }
 
@@ -18,11 +25,13 @@ export class AppController {
     const {
       recipeForm,
       cancelEditBtn,
-      pickRandomBtn,
+      pickRandomSnackBtn,
+      pickRandomMealBtn,
       generatePlannerBtn,
       exportJsonBtn,
       importJsonInput,
-      themeToggle
+      themeToggle,
+      tabButtons
     } = this.elements;
 
     recipeForm.addEventListener('submit', (event) => {
@@ -35,13 +44,22 @@ export class AppController {
 
     cancelEditBtn.addEventListener('click', () => this.resetForm());
 
-    pickRandomBtn.addEventListener('click', () => {
-      const recipe = this.service.getRandom();
-      this.renderer.renderRandomRecipe(this.elements.randomResult, recipe);
+    pickRandomSnackBtn.addEventListener('click', () => {
+      this.lastRandomSnack = this.service.getRandomByCategory('snack');
+      this.renderRandomSummary();
+      this.renderShoppingList();
+    });
+
+    pickRandomMealBtn.addEventListener('click', () => {
+      this.lastRandomMeal = this.service.getRandomByCategory('meal');
+      this.renderRandomSummary();
+      this.renderShoppingList();
     });
 
     generatePlannerBtn.addEventListener('click', () => {
-      this.renderer.renderPlanner(this.elements.plannerContainer, this.service.generateWeeklyPlan());
+      this.lastPlanner = this.service.generateWeeklyPlan();
+      this.renderer.renderPlanner(this.elements.plannerContainer, this.lastPlanner);
+      this.renderShoppingList();
     });
 
     exportJsonBtn.addEventListener('click', () => {
@@ -71,6 +89,12 @@ export class AppController {
       document.documentElement.dataset.theme = next;
       localStorage.setItem('recipePlanner.theme', next);
     });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        this.activateTab(button.dataset.tabTarget);
+      });
+    });
   }
 
   render() {
@@ -82,6 +106,7 @@ export class AppController {
         this.render();
       }
     });
+    this.renderShoppingList();
   }
 
   readFormPayload() {
@@ -136,5 +161,68 @@ export class AppController {
   applySavedTheme() {
     const saved = localStorage.getItem('recipePlanner.theme') || 'light';
     document.documentElement.dataset.theme = saved;
+  }
+
+  renderRandomSummary() {
+    const parts = [];
+    if (this.lastRandomSnack) parts.push(`Snack: ${this.lastRandomSnack.name}`);
+    if (this.lastRandomMeal) parts.push(`Meal: ${this.lastRandomMeal.name}`);
+
+    if (!parts.length) {
+      this.elements.randomResult.textContent = 'No recipe selected yet.';
+      return;
+    }
+
+    this.elements.randomResult.innerHTML = `<strong>${parts.join(' | ')}</strong>`;
+  }
+
+  renderShoppingList() {
+    const ingredients = this.collectShoppingIngredients();
+    const activeNames = new Set(ingredients.map((entry) => entry.name));
+    this.checkedShoppingItems.forEach((name) => {
+      if (!activeNames.has(name)) this.checkedShoppingItems.delete(name);
+    });
+
+    this.renderer.renderShoppingList(
+      this.elements.shoppingListContainer,
+      ingredients,
+      this.checkedShoppingItems,
+      {
+        onToggle: (name, isChecked) => {
+          if (isChecked) this.checkedShoppingItems.add(name);
+          else this.checkedShoppingItems.delete(name);
+        }
+      }
+    );
+  }
+
+  collectShoppingIngredients() {
+    const sourceRecipes = [
+      this.lastRandomSnack,
+      this.lastRandomMeal,
+      ...this.lastPlanner.days.flatMap((day) => day.meals)
+    ].filter(Boolean);
+
+    const counts = new Map();
+    sourceRecipes.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) => {
+        const key = ingredient.trim();
+        if (!key) return;
+        counts.set(key, (counts.get(key) || 0) + 1);
+      });
+    });
+
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  activateTab(tabId) {
+    this.elements.tabButtons.forEach((button) => {
+      button.classList.toggle('active', button.dataset.tabTarget === tabId);
+    });
+    this.elements.tabPanels.forEach((panel) => {
+      panel.classList.toggle('active', panel.id === tabId);
+    });
   }
 }

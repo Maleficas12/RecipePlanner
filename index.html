@@ -16,7 +16,41 @@
     </header>
 
     <main class="layout">
-      <section class="card" id="recipeFormCard">
+      <nav class="tabs" aria-label="Main tabs">
+        <button class="tab-btn active" data-tab-target="pickerTab" type="button">Picker</button>
+        <button class="tab-btn" data-tab-target="recipesTab" type="button">Recipes</button>
+      </nav>
+
+      <section id="pickerTab" class="tab-panel active">
+        <section class="card" id="randomCard">
+          <div class="card-header">
+            <h2>Random Picker</h2>
+            <div class="actions">
+              <button id="pickRandomSnackBtn" class="primary-btn" type="button">Random snack</button>
+              <button id="pickRandomMealBtn" class="primary-btn" type="button">Random meal</button>
+            </div>
+          </div>
+          <div id="randomResult" class="muted">No recipe selected yet.</div>
+        </section>
+
+        <section class="card" id="plannerCard">
+          <div class="card-header">
+            <h2>Weekly Planner</h2>
+            <button id="generatePlannerBtn" class="primary-btn" type="button">Generate week</button>
+          </div>
+          <p class="muted">Creates 2 non-repeating meals per day (14 unique meal items when possible).</p>
+          <div id="plannerContainer"></div>
+        </section>
+
+        <section class="card" id="shoppingCard">
+          <h2>Shopping checklist</h2>
+          <p class="muted">Ingredients from latest random picks and weekly planner. Tick items as you shop.</p>
+          <div id="shoppingListContainer" class="shopping-list"></div>
+        </section>
+      </section>
+
+      <section id="recipesTab" class="tab-panel">
+        <section class="card" id="recipeFormCard">
         <h2 id="formTitle">Add Recipe</h2>
         <form id="recipeForm">
           <input type="hidden" id="recipeId" name="recipeId" />
@@ -68,9 +102,9 @@
             <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Cancel edit</button>
           </div>
         </form>
-      </section>
+        </section>
 
-      <section class="card" id="recipeListCard">
+        <section class="card" id="recipeListCard">
         <div class="card-header">
           <h2>Recipes</h2>
           <div class="actions inline-actions">
@@ -83,22 +117,6 @@
         </div>
         <div id="recipesContainer" class="recipe-list"></div>
       </section>
-
-      <section class="card" id="randomCard">
-        <div class="card-header">
-          <h2>Random Picker</h2>
-          <button id="pickRandomBtn" class="primary-btn" type="button">Pick random recipe</button>
-        </div>
-        <div id="randomResult" class="muted">No recipe selected yet.</div>
-      </section>
-
-      <section class="card" id="plannerCard">
-        <div class="card-header">
-          <h2>Weekly Planner</h2>
-          <button id="generatePlannerBtn" class="primary-btn" type="button">Generate week</button>
-        </div>
-        <p class="muted">Creates 2 non-repeating meals per day (14 unique items when possible).</p>
-        <div id="plannerContainer"></div>
       </section>
     </main>
 

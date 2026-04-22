@@ -21,12 +21,16 @@ const controller = new AppController({
     formTitle: byId('formTitle'),
     cancelEditBtn: byId('cancelEditBtn'),
     randomResult: byId('randomResult'),
-    pickRandomBtn: byId('pickRandomBtn'),
+    pickRandomSnackBtn: byId('pickRandomSnackBtn'),
+    pickRandomMealBtn: byId('pickRandomMealBtn'),
     plannerContainer: byId('plannerContainer'),
     generatePlannerBtn: byId('generatePlannerBtn'),
+    shoppingListContainer: byId('shoppingListContainer'),
     exportJsonBtn: byId('exportJsonBtn'),
     importJsonInput: byId('importJsonInput'),
-    themeToggle: byId('themeToggle')
+    themeToggle: byId('themeToggle'),
+    tabButtons: Array.from(document.querySelectorAll('[data-tab-target]')),
+    tabPanels: Array.from(document.querySelectorAll('.tab-panel'))
   }
 });
 

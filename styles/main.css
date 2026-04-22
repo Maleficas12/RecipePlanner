@@ -45,9 +45,9 @@ body {
   max-width: 1100px;
   margin: 0 auto;
   padding: 1rem;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 .card {
@@ -58,11 +58,25 @@ body {
   box-shadow: var(--shadow);
 }
 
+.tabs { display: flex; gap: 0.6rem; }
+.tab-btn {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.tab-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+.tab-panel { display: none; gap: 1rem; }
+.tab-panel.active { display: grid; grid-template-columns: repeat(12, 1fr); }
+
 #recipeFormCard, #recipeListCard { grid-column: span 6; }
-#randomCard, #plannerCard { grid-column: span 12; }
+#randomCard, #plannerCard, #shoppingCard { grid-column: span 12; }
 
 @media (max-width: 900px) {
-  #recipeFormCard, #recipeListCard, #randomCard, #plannerCard { grid-column: span 12; }
+  .tab-panel.active { grid-template-columns: 1fr; }
+  #recipeFormCard, #recipeListCard, #randomCard, #plannerCard, #shoppingCard { grid-column: span 1; }
 }
 
 label { display: block; font-size: 0.9rem; margin-bottom: 0.75rem; }
@@ -141,6 +155,36 @@ button, .upload-btn {
 }
 .day-card h4 { margin: 0 0 0.4rem; font-size: 0.92rem; }
 .day-card ul { margin: 0; padding-left: 1rem; }
+
+.shopping-list {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem;
+  min-height: 72px;
+}
+.shopping-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+.shopping-list label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+.shopping-list input[type='checkbox'] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+.shopping-list .is-checked {
+  text-decoration: line-through;
+  color: var(--muted);
+}
 
 @media (max-width: 900px) {
   .macro-grid { grid-template-columns: repeat(3, 1fr); }
