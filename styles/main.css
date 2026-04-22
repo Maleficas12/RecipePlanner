@@ -149,13 +149,62 @@ button, .upload-btn {
   grid-template-columns: repeat(7, minmax(110px, 1fr));
   gap: 0.5rem;
 }
+.planner-week-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.planner-week-title {
+  margin: 0.25rem 0 0.6rem;
+}
 .day-card {
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.6rem;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
-.day-card h4 { margin: 0 0 0.4rem; font-size: 0.92rem; }
-.day-card ul { margin: 0; padding-left: 1rem; }
+.day-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+.day-meal-section {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem;
+  background: rgba(37, 99, 235, 0.04);
+}
+.breakfast-section {
+  min-height: 134px;
+}
+.meal-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.meal-list {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+.meal-item {
+  margin: 0;
+}
+.dish-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+.dish-ingredients {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
 
 .visually-hidden {
   position: absolute;
@@ -222,4 +271,72 @@ button, .upload-btn {
 @media (max-width: 900px) {
   .macro-grid { grid-template-columns: repeat(3, 1fr); }
   .week-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .app-header,
+  .tabs,
+  #randomCard,
+  #randomShoppingCard,
+  #weeklyShoppingCard,
+  #recipeFormCard,
+  #recipeListCard,
+  #plannerWeekTabs,
+  #generatePlannerBtn,
+  #printPlannerBtn {
+    display: none !important;
+  }
+
+  .layout,
+  .card,
+  #pickerTab,
+  #plannerCard {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  #plannerCard h2,
+  .planner-week-title {
+    margin: 0 0 0.5rem;
+  }
+
+  #pickerTab {
+    display: block !important;
+  }
+
+  #recipesTab {
+    display: none !important;
+  }
+
+  .week-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0;
+    break-inside: avoid;
+  }
+
+  .day-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-color: #ccc;
+    min-height: 100%;
+  }
+
+  .day-meal-section {
+    background: transparent;
+  }
 }

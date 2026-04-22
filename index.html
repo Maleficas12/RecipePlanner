@@ -42,9 +42,18 @@
         <section class="card" id="plannerCard">
           <div class="card-header">
             <h2>Wochenplan</h2>
-            <button id="generatePlannerBtn" class="primary-btn" type="button">Woche erstellen</button>
+            <div class="actions inline-actions">
+              <button id="generatePlannerBtn" class="primary-btn" type="button">Monat erstellen</button>
+              <button id="printPlannerBtn" class="ghost-btn" type="button">Als PDF drucken</button>
+            </div>
           </div>
-          <p class="muted">Pro Tag: 1 Frühstück + 2 Mittagessen (wenn möglich ohne Wiederholung).</p>
+          <p class="muted">Pro Tag: 1 Frühstück + 2 Mittagessen (ohne Wiederholung bis Rezepte aufgebraucht sind).</p>
+          <div id="plannerWeekTabs" class="planner-week-tabs" role="tablist" aria-label="Monatswochen">
+            <button class="tab-btn active" type="button" data-week-index="0">Woche 1</button>
+            <button class="tab-btn" type="button" data-week-index="1">Woche 2</button>
+            <button class="tab-btn" type="button" data-week-index="2">Woche 3</button>
+            <button class="tab-btn" type="button" data-week-index="3">Woche 4</button>
+          </div>
           <div id="plannerContainer"></div>
         </section>
 

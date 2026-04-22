@@ -42,34 +42,43 @@ export class RecipeRenderer {
     `;
   }
 
-  renderPlanner(container, planner) {
-    if (!planner.days.length) {
+  renderPlanner(container, planner, activeWeekIndex = 0) {
+    if (!planner.weeks?.length) {
       container.innerHTML = `<p class="muted">${planner.warning || 'Keine Daten verfügbar.'}</p>`;
       return;
     }
 
+    const week = planner.weeks[activeWeekIndex] || planner.weeks[0];
     const warningHtml = planner.warning ? `<p class="muted">${planner.warning}</p>` : '';
     const mealLine = (meal) => `
-      <li>
-        <strong>${meal.name}</strong><br />
-        <span class="muted">Zutaten: ${meal.ingredients.join(', ') || '-'}</span>
+      <li class="meal-item">
+        <p class="dish-name">${meal.name}</p>
+        <p class="dish-ingredients">Zutaten: ${meal.ingredients.join(', ') || '-'}</p>
       </li>
     `;
-    const daysHtml = planner.days.map((day) => `
+    const daysHtml = week.days.map((day) => `
       <article class="day-card">
-        <h4>${day.day}</h4>
-        <p><strong>Frühstück:</strong></p>
-        <ul>
-          ${day.breakfast ? mealLine(day.breakfast) : '<li>-</li>'}
-        </ul>
-        <p><strong>Mittagessen:</strong></p>
-        <ul>
-          ${day.lunches.map((meal) => mealLine(meal)).join('')}
-        </ul>
+        <h4 class="day-title">${day.day}</h4>
+        <section class="day-meal-section breakfast-section">
+          <h5 class="meal-title">Frühstück</h5>
+          <ul class="meal-list">
+            ${day.breakfast ? mealLine(day.breakfast) : '<li class="meal-item"><p class="dish-name">-</p></li>'}
+          </ul>
+        </section>
+        <section class="day-meal-section lunch-section">
+          <h5 class="meal-title">Mittagessen</h5>
+          <ul class="meal-list">
+            ${day.lunches.map((meal) => mealLine(meal)).join('')}
+          </ul>
+        </section>
       </article>
     `).join('');
 
-    container.innerHTML = `${warningHtml}<div class="week-grid">${daysHtml}</div>`;
+    container.innerHTML = `
+      ${warningHtml}
+      <h3 class="planner-week-title">${week.label}</h3>
+      <div class="week-grid">${daysHtml}</div>
+    `;
   }
 
   renderShoppingList(container, ingredientItems, checkedState, { onToggle }) {
