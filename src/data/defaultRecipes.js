@@ -1,0 +1,42 @@
+const item = (name, category, mealSlot, kcal, protein, carbs, fats, cookingTime, ingredients) => ({
+  id: crypto.randomUUID(),
+  name,
+  category,
+  mealSlot,
+  kcal,
+  protein,
+  carbs,
+  fats,
+  cookingTime,
+  ingredients
+});
+
+export const defaultRecipes = [
+  item('Nüsse', 'snack', 'all', 180, 6, 5, 15, 1, ['gemischte Nüsse']),
+  item('Lassi', 'snack', 'all', 140, 8, 16, 4, 5, ['Joghurt', 'Milch', 'Gewürze']),
+  item('Omelette', 'meal', 'breakfast', 260, 20, 3, 17, 10, ['Eier', 'Salz', 'Butter']),
+  item('Toast', 'meal', 'breakfast', 210, 7, 28, 7, 6, ['Vollkorntoast', 'Butter']),
+  item('Vollkorn brot mit Schinken', 'meal', 'breakfast', 320, 18, 32, 13, 8, ['Vollkornbrot', 'Schinken']),
+  item('Vollkorn brot mit Frischkäse', 'meal', 'breakfast', 300, 13, 31, 12, 8, ['Vollkornbrot', 'Frischkäse']),
+  item('Protein Joghurt mit Früchte', 'meal', 'breakfast', 280, 22, 26, 8, 5, ['Protein-Joghurt', 'Früchte']),
+  item('Brokkoli Auflauf', 'meal', 'lunch', 420, 28, 18, 25, 35, ['Brokkoli', 'Sahne', 'Käse']),
+  item('Griesschmarrn', 'meal', 'lunch', 410, 13, 60, 12, 30, ['Grieß', 'Milch', 'Ei']),
+  item('Zucchini-Nudel mit Chicken, gestampfter Knoblauch', 'meal', 'lunch', 470, 39, 24, 18, 25, ['Zucchini-Nudeln', 'Huhn', 'Knoblauch']),
+  item('Ofen-Kartoffel/Potato Wedges (air fryer)', 'meal', 'lunch', 360, 8, 58, 10, 28, ['Kartoffeln', 'Öl', 'Gewürze']),
+  item('Folienkartoffeln mit Knoblauch/Sauce', 'meal', 'lunch', 390, 9, 63, 11, 45, ['Kartoffeln', 'Knoblauchsauce']),
+  item('Eiernockerl mit Knoblauch-Gurken Salat', 'meal', 'lunch', 500, 21, 58, 19, 30, ['Nockerl', 'Eier', 'Gurke', 'Knoblauch']),
+  item('Hühner-Eintropfsuppe', 'meal', 'lunch', 320, 30, 18, 11, 45, ['Huhn', 'Brühe', 'Eintropfteig']),
+  item('Ramen', 'meal', 'lunch', 520, 22, 65, 18, 25, ['Ramen-Nudeln', 'Brühe', 'Ei']),
+  item('Spaghetti mit Sugo/Pesto', 'meal', 'lunch', 540, 16, 76, 18, 25, ['Spaghetti', 'Sugo oder Pesto']),
+  item('Faschiertes mit Reis', 'meal', 'lunch', 570, 34, 52, 23, 30, ['Faschiertes', 'Reis']),
+  item('Shrimps Nudeln', 'meal', 'lunch', 510, 31, 62, 14, 25, ['Garnelen', 'Nudeln']),
+  item('Creme-Spinat mit Ei', 'meal', 'lunch', 390, 21, 18, 24, 20, ['Spinat', 'Ei', 'Sahne']),
+  item('Spargel-Creme-Suppe', 'meal', 'lunch', 300, 10, 20, 18, 30, ['Spargel', 'Sahne', 'Suppe']),
+  item('Süß-Sauer Chicken', 'meal', 'lunch', 530, 35, 55, 18, 35, ['Huhn', 'Süß-Sauer-Sauce', 'Reis']),
+  item('Tortillas mit Teriyaki Chicken', 'meal', 'lunch', 560, 33, 56, 21, 25, ['Tortilla', 'Huhn', 'Teriyaki-Sauce']),
+  item('Berner-Würstel', 'meal', 'lunch', 610, 29, 12, 49, 18, ['Würstel', 'Speck', 'Käse']),
+  item('Lachs mit Kartoffeln', 'meal', 'lunch', 520, 34, 36, 24, 30, ['Lachs', 'Kartoffeln']),
+  item('Champignon mit Butter-Chicken Sauce', 'meal', 'lunch', 480, 27, 15, 32, 25, ['Champignons', 'Butter-Chicken-Sauce']),
+  item('Palatschinken', 'meal', 'lunch', 460, 14, 62, 16, 20, ['Mehl', 'Milch', 'Ei']),
+  item('Karfiol mit Speck', 'meal', 'lunch', 430, 20, 12, 31, 28, ['Karfiol', 'Speck'])
+];

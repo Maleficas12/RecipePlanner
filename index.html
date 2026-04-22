@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rezept-Planer</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Rezept-Planer</h1>
+        <p>Rezepte verwalten, zufällig auswählen und die Woche planen.</p>
+      </div>
+      <button id="themeToggle" class="ghost-btn" type="button">Design wechseln</button>
+    </header>
+
+    <main class="layout">
+      <nav class="tabs" aria-label="Hauptnavigation">
+        <button class="tab-btn active" data-tab-target="pickerTab" type="button">Auswahl</button>
+        <button class="tab-btn" data-tab-target="recipesTab" type="button">Rezepte</button>
+      </nav>
+
+      <section id="pickerTab" class="tab-panel active">
+        <section class="card" id="randomCard">
+          <div class="card-header">
+            <h2>Zufallsauswahl</h2>
+            <div class="actions">
+              <button id="pickRandomSnackBtn" class="primary-btn" type="button">Zufalls-Snack</button>
+              <button id="pickRandomMealBtn" class="primary-btn" type="button">Zufalls-Mahlzeit</button>
+            </div>
+          </div>
+          <div id="randomResult" class="muted">Noch nichts ausgewählt.</div>
+        </section>
+
+        <section class="card" id="randomShoppingCard">
+          <h2>Einkaufsliste (Zufall)</h2>
+          <p class="muted">Zutaten aus den zuletzt gezogenen Zufallsgerichten.</p>
+          <div id="randomShoppingListContainer" class="shopping-list"></div>
+        </section>
+
+        <section class="card" id="plannerCard">
+          <div class="card-header">
+            <h2>Wochenplan</h2>
+            <button id="generatePlannerBtn" class="primary-btn" type="button">Woche erstellen</button>
+          </div>
+          <p class="muted">Pro Tag: 1 Frühstück + 2 Mittagessen (wenn möglich ohne Wiederholung).</p>
+          <div id="plannerContainer"></div>
+        </section>
+
+        <section class="card" id="weeklyShoppingCard">
+          <h2>Einkaufsliste (Wochenplan)</h2>
+          <p class="muted">Zutaten aus dem aktuell generierten Wochenplan.</p>
+          <div id="weeklyShoppingListContainer" class="shopping-list"></div>
+        </section>
+      </section>
+
+      <section id="recipesTab" class="tab-panel">
+        <section class="card" id="recipeFormCard">
+        <details id="recipeFormDetails" open>
+          <summary id="recipeFormSummary">Rezept hinzufügen</summary>
+          <h2 id="formTitle" class="visually-hidden">Rezept hinzufügen</h2>
+          <form id="recipeForm">
+          <input type="hidden" id="recipeId" name="recipeId" />
+
+          <label>Name
+            <input id="name" name="name" required maxlength="120" placeholder="z. B. Omelette" />
+          </label>
+
+          <label>Zutaten (durch Komma getrennt)
+            <textarea id="ingredients" name="ingredients" rows="3" placeholder="Eier, Milch, Salz"></textarea>
+          </label>
+
+          <div class="grid-2">
+            <label>Kalorien (kcal)
+              <input id="kcal" name="kcal" type="number" min="0" step="1" required />
+            </label>
+            <label>Eiweiß (g)
+              <input id="protein" name="protein" type="number" min="0" step="0.1" required />
+            </label>
+            <label>Kohlenhydrate (g)
+              <input id="carbs" name="carbs" type="number" min="0" step="0.1" required />
+            </label>
+            <label>Fette (g)
+              <input id="fats" name="fats" type="number" min="0" step="0.1" required />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>Kochzeit (Minuten)
+              <input id="cookingTime" name="cookingTime" type="number" min="1" step="1" required />
+            </label>
+            <label>Kategorie
+              <select id="category" name="category" required>
+                <option value="meal">Mahlzeit</option>
+                <option value="snack">Snack</option>
+              </select>
+            </label>
+            <label>Tageszeit
+              <select id="mealSlot" name="mealSlot" required>
+                <option value="all">Alle</option>
+                <option value="breakfast">Frühstück</option>
+                <option value="lunch">Mittagessen</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="primary-btn" type="submit">Rezept speichern</button>
+            <button class="ghost-btn" id="cancelEditBtn" type="button" hidden>Bearbeiten abbrechen</button>
+          </div>
+          </form>
+        </details>
+        </section>
+
+        <section class="card" id="recipeListCard">
+        <div class="card-header">
+          <h2>Rezepte</h2>
+          <div class="actions inline-actions">
+            <button class="ghost-btn" id="exportJsonBtn" type="button">JSON exportieren</button>
+            <label class="ghost-btn upload-btn">
+              JSON importieren
+              <input id="importJsonInput" type="file" accept="application/json" hidden />
+            </label>
+          </div>
+        </div>
+        <div id="recipesContainer" class="recipe-list"></div>
+      </section>
+      </section>
+    </main>
+
+    <template id="recipeItemTemplate">
+      <article class="recipe-item">
+        <header>
+          <h3 data-role="name"></h3>
+          <span data-role="tags" class="pill"></span>
+        </header>
+        <p data-role="ingredients" class="muted"></p>
+        <dl class="macro-grid">
+          <div><dt>Kcal</dt><dd data-role="kcal"></dd></div>
+          <div><dt>Eiweiß</dt><dd data-role="protein"></dd></div>
+          <div><dt>Kohlenh.</dt><dd data-role="carbs"></dd></div>
+          <div><dt>Fett</dt><dd data-role="fats"></dd></div>
+          <div><dt>Zeit</dt><dd data-role="time"></dd></div>
+        </dl>
+        <div class="actions inline-actions">
+          <button data-role="edit" class="ghost-btn" type="button">Bearbeiten</button>
+          <button data-role="remove" class="danger-btn" type="button">Löschen</button>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
