@@ -17,11 +17,12 @@
 
     <main class="layout">
       <nav class="tabs" aria-label="Hauptnavigation">
-        <button class="tab-btn active" data-tab-target="pickerTab" type="button">Auswahl</button>
+        <button class="tab-btn active" data-tab-target="singleTab" type="button">Einzel</button>
+        <button class="tab-btn" data-tab-target="weeklyTab" type="button">Weekly</button>
         <button class="tab-btn" data-tab-target="recipesTab" type="button">Rezepte</button>
       </nav>
 
-      <section id="pickerTab" class="tab-panel active">
+      <section id="singleTab" class="tab-panel active">
         <section class="card" id="randomCard">
           <div class="card-header">
             <h2>Zufallsauswahl</h2>
@@ -38,12 +39,15 @@
           <p class="muted">Zutaten aus den zuletzt gezogenen Zufallsgerichten.</p>
           <div id="randomShoppingListContainer" class="shopping-list"></div>
         </section>
+      </section>
 
+      <section id="weeklyTab" class="tab-panel">
         <section class="card" id="plannerCard">
           <div class="card-header">
             <h2>Wochenplan</h2>
             <div class="actions inline-actions">
               <button id="generatePlannerBtn" class="primary-btn" type="button">Monat erstellen</button>
+              <button id="sharePlannerBtn" class="ghost-btn icon-btn" type="button" aria-label="Wochenplan teilen" title="Wochenplan teilen">🔗</button>
               <button id="printPlannerBtn" class="ghost-btn" type="button">Als PDF drucken</button>
             </div>
           </div>
